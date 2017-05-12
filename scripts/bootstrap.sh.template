@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo '
+ACTION=="add|change", ENV{ID_MODEL}=="*QEMU*", KERNEL=="sd*[!0-9]", SYMLINK+="disk/by-id/virtio-$env{ID_SERIAL_SHORT}"
+ACTION=="add|change", ENV{ID_MODEL}=="*QEMU*", KERNEL=="sd*[0-9]", SYMLINK+="disk/by-id/virtio-$env{ID_SERIAL_SHORT}-part%n"
+' > /etc/udev/rules.d/99-qemu-vd.rules
+udevadm trigger --attr-match=subsystem=block
+udevadm control --reload-rule
+
+apt-get install -y 'python'
+sed -i "s/127.0.0.1 localhost/127.0.0.1 localhost $(hostname)/g" /etc/hosts
+
+## add some stuff you want to add

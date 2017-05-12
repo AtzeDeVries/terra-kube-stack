@@ -1,0 +1,14 @@
+*
+!.gitignore
+!terraform/
+!terraform/*.tf
+!terraform/template*
+!tf-state/
+!tf-state/*.template
+!scripts/
+!scripts/get-certs.sh
+!scripts/*.template
+!kube-resources/
+!kube-resources/*
+!ansible.cfg
+!*.md

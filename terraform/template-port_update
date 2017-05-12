@@ -1,0 +1,6 @@
+#!/bin/sh
+
+${master-ports}
+${fat-ports}
+${slim-ports}
+${ceph-ports}

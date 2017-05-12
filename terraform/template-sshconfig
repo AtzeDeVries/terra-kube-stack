@@ -1,0 +1,7 @@
+Host 172.16.*
+  ProxyCommand    ssh -o StrictHostKeyChecking=no -W %h:%p ${sshuser}@${bastion_hosts}
+  User  ubuntu
+Host *
+  ControlMaster   auto
+  ControlPath     ./ansible-mux-%r@%h:%p
+  ControlPersist  15m

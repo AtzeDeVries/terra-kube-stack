@@ -1,0 +1,37 @@
+### -> global
+cluster-name = "test"
+
+key-pair = "atze"
+
+internal-ip-pool = "net04"
+
+internal-ip-pool-id = "cae5d471-7363-428e-8e08-5bb30c7dbaeb"
+
+floating-ip-pool = "external"
+
+### -> master
+master-count = 1
+master-floating-ips = 1
+master-image-id = "df3c858f-7d26-4e97-ba89-6abf49e6b076"
+master-flavor-id = "488e3446-c46b-4288-bbfe-d3530de92e99"
+master-sec-group = "tight"
+
+fat-minion-count = 5
+fat-minion-floating-ips = 1
+fat-minion-image-id = "df3c858f-7d26-4e97-ba89-6abf49e6b076"
+fat-minion-flavor-id = "5c546141-7dcd-4fa5-bc3b-c703b5889e26"
+fat-minion-sec-group = "tight"
+
+slim-minion-count = 1
+slim-minion-floating-ips = 0
+slim-minion-image-id = "df3c858f-7d26-4e97-ba89-6abf49e6b076"
+slim-minion-flavor-id = "488e3446-c46b-4288-bbfe-d3530de92e99"
+slim-minion-sec-group = "tight"
+
+ceph-minion-count = 3
+ceph-minion-floating-ips = 0
+ceph-minion-image-id = "df3c858f-7d26-4e97-ba89-6abf49e6b076"
+ceph-minion-flavor-id = "67840113-ea9a-4d62-8c4c-55564d3ebad4"
+ceph-minion-sec-group = "tight"
+
+
