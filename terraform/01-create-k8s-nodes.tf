@@ -20,7 +20,7 @@ variable "master-image-id" {}
 #    ip_address = "${var.allowed_address_pairs[1]}"
 #  }
 #}
-#
+
 resource "openstack_compute_instance_v2" "master" {
   count = "${var.master-count}"
   name  = "k8s-${var.cluster-name}-master-${count.index}"
@@ -60,7 +60,7 @@ resource "openstack_compute_floatingip_associate_v2" "master-flip-asso" {
 
 ### -> output
 data "template_file" "master" {
-  count    = "${var.master-count}"
+  count    = "${var.master-floating-ips}"
   template = "$${node_name} ansible_host=$${ip}"
 
   vars {
@@ -92,6 +92,8 @@ data "template_file" "master-port-update" {
     #node_name = "k8s-${var.cluster-name}-master-minion-${count.index}"
     #ip = "temp"
     instance_id = "${element(openstack_compute_instance_v2.master.*.id, count.index)}"
+    subnet_0 = "${var.allowed_address_pairs_0}"
+    subnet_1 = "${var.allowed_address_pairs_1}"
     #port_id        = "${element(openstack_compute_instance_v2.master-minion.*.network.0.port, count.index)}"
     #ip        = "${element(openstack_compute_instance_v2.master-minion.*.access_ip_v4, count.index)}"
    # ip        = "${element(openstack_networking_port_v2.master-minion-ports.*.fixed_ip, count.index)}"

@@ -9,6 +9,10 @@ internal-ip-pool-id = "cae5d471-7363-428e-8e08-5bb30c7dbaeb"
 
 floating-ip-pool = "external"
 
+allowed_address_pairs_0 = "subnet_0"
+allowed_address_pairs_1 = "subnet_1"
+
+
 ### -> master
 master-count = 1
 master-floating-ips = 1

@@ -1,11 +1,13 @@
 [kube-master]
 ${master_hosts}
+${master_noflip_hosts}
 
 [bastion]
 ${bastion_hosts}
 
 [etcd]
 ${master_hosts}
+${master_noflip_hosts}
 
 [kube-node]
 ${fat_hosts}

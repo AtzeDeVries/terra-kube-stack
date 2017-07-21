@@ -1,4 +1,4 @@
-Host 172.16.*
+Host 172.*
   ProxyCommand    ssh -o StrictHostKeyChecking=no -W %h:%p ${sshuser}@${bastion_hosts}
   User  ubuntu
 Host *

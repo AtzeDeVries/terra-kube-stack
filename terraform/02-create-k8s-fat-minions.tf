@@ -78,6 +78,8 @@ data "template_file" "fat-port-update" {
     #node_name = "k8s-${var.cluster-name}-fat-minion-${count.index}"
     #ip = "temp"
     instance_id = "${element(openstack_compute_instance_v2.fat-minion.*.id, count.index)}"
+    subnet_0 = "${var.allowed_address_pairs_0}"
+    subnet_1 = "${var.allowed_address_pairs_1}"
     #port_id        = "${element(openstack_compute_instance_v2.fat-minion.*.network.0.port, count.index)}"
     #ip        = "${element(openstack_compute_instance_v2.fat-minion.*.access_ip_v4, count.index)}"
    # ip        = "${element(openstack_networking_port_v2.fat-minion-ports.*.fixed_ip, count.index)}"

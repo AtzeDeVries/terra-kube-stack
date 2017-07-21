@@ -4,6 +4,7 @@ data "template_file" "ansible_inventory" {
 
   vars {
     master_hosts   = "${join("\n",data.template_file.master.*.rendered)}"
+    master_noflip_hosts   = "${join("\n",data.template_file.master_noflip.*.rendered)}"
     bastion_hosts   = "k8s-${var.cluster-name}-master-0 ansible_host=${openstack_compute_floatingip_v2.master-flip.0.address}"
     fat_hosts = "${join("\n",data.template_file.fat-minion.*.rendered)}"
     slim_hosts     = "${join("\n",data.template_file.slim-minion.*.rendered)}"

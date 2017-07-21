@@ -19,9 +19,10 @@ variable "ssh_user" {
   default = "ubuntu"
 }
 
-variable "allowed_address_pairs" {
-  default = ["10.233.0.0/18","10.233.64.0/18"]
-}
+
+variable "allowed_address_pairs_0" {}
+
+variable "allowed_address_pairs_1" {}
 
 variable "key-pair" {}
 
