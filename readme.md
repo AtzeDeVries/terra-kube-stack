@@ -86,10 +86,8 @@ hyperkube_image_repo: "atzedevries/hyperkube"
 ```
 #### Boostrap of your instances
 copy `./scrips/bootstrap.sh.template ./terraform/bootstrap.sh
-
-
-You can edit `terraform/userdata.sh` to add some stuff to the servers. I've added some stuff
-to make cinder volumes work, install python etc. I've also added your Openstack certificate, since it is
+You can edit `terraform/boostrap.sh` to add some stuff to the servers. I've added some stuff
+to make cinder volumes work, install python etc. I've also added our Openstack certificate, since it is
 not accepted by ubuntu by default. Your install of kubernetes will fail if the cerifitcate is not accepted.
 
 #### Create instances
