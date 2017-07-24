@@ -25,12 +25,12 @@ The configuration is pretty configurable and easy to extend.
 ```shell
 git clone https://github.com/AtzeDeVries/terra-kube-stack
 cd terra-kube-stack
-git clone https://github.com/kubernetes-incubator/kargo
-cp -fr kargo/inventory ../
+git clone https://github.com/kubernetes-incubator/kubespray
+cp -fr kubespray/inventory ../
 ```
 #### Set some settings
 copy `tf-state/terraform.tfvars.template` to `tf-state/terraform.tfvars`
-then edit `terraform.tfvars`
+then edit `terraform.tfvars`. Make sure the subnets in `allowed_address_pairs` are unique in your network
 ```terraform
 ### -> global
 cluster-name = "test"
@@ -38,6 +38,9 @@ key-pair = "atze"
 internal-ip-pool = "net04"
 internal-ip-pool-id = "cae5d471-7363-428e-8e08-5bb30c7dbaeb"
 floating-ip-pool = "external"
+allowed_address_pairs_0 = "10.237.0.0.18/24"
+allowed_address_pairs_1 = "10.237.64.0/18"
+
 
 ### -> master
 master-count = 1
@@ -73,6 +76,12 @@ Then edit `inventory/group_vars/k8s-cluster.yml` and set
 ```yaml
 bootstrap_os: ubuntu
 ```
+The default networking is set to `calico`. You can change this to `flannel`. For flannel
+there are no special network requirements. For calico you need to run the `port-update.sh` script (chech later in 
+documentation). For calcio you can set the `ipip` mode. For the best performance (native performance) you need to 
+set `ipip: false`, but this will not work in all setups. You need to make use the 'allowed adress pairs' you set are 
+unused in your network, also your network might not allow it. Having `ipip: true` (which is default) will allow you 
+to use `calico` in most situations, but the performance is less, but still good. 
 You can change `dns` to
 ```yaml
 dns_mode: kubedns
@@ -103,6 +112,9 @@ We can use the output of terraform the setup some settings for ansible.
 ```shell
 terraform output -state=./tf-state/terraform.tfstate  ansible_inventory > inventory/inventory
 terraform output -state=./tf-state/terraform.tfstate  ansible_sshconfig > ./ssh-bastion.conf
+```
+And if you are using `calico`
+```shell
 terraform output -state=./tf-state/terraform.tfstate  port-update > tf-state/port-update.sh
 ```
 
@@ -123,7 +135,11 @@ This should give a succes.
 Now we can install kubernetes, so we run the playbook
 
 ```shell
-ansible-playbook -i inventory/inventory -u ubuntu  -b kargo/cluster.yml
+ansible-playbook -i inventory/inventory \
+    -u ubuntu -b \
+    -e kube_service_adresses=<your first subnet from allowed address pairs> \
+    -e kube_pods_subnet=<your second subnet from allowed address pairs> \
+    kubespray/cluster.yml
 ```
 Now wait about 5 to 10 minutes. (rerun if it fails, it might finish then)
 

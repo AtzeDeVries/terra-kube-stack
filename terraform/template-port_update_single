@@ -1,3 +1,3 @@
-neutron port-update $$(neutron port-list -c id -c device_id | grep ${instance_id} | awk '{print $$2}') --allowed_address_pairs list=true type=dict ip_address=10.233.0.0/18
-neutron port-update $$(neutron port-list -c id -c device_id | grep ${instance_id} | awk '{print $$2}') --allowed_address_pairs list=true type=dict ip_address=10.233.64.0/18
+neutron port-update $$(neutron port-list -c id -c device_id | grep ${instance_id} | awk '{print $$2}') --allowed_address_pairs list=true type=dict ip_address=${subnet_0} ip_address=${subnet_1}
+#neutron port-update $$(neutron port-list -c id -c device_id | grep ${instance_id} | awk '{print $$2}') --allowed_address_pairs list=true type=dict ip_address=10.233.64.0/18
 
