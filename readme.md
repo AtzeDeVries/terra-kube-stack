@@ -38,7 +38,7 @@ key-pair = "atze"
 internal-ip-pool = "net04"
 internal-ip-pool-id = "cae5d471-7363-428e-8e08-5bb30c7dbaeb"
 floating-ip-pool = "external"
-allowed_address_pairs_0 = "10.237.0.0.18/24"
+allowed_address_pairs_0 = "10.237.0.0/18"
 allowed_address_pairs_1 = "10.237.64.0/18"
 
 
