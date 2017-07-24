@@ -26,7 +26,7 @@ The configuration is pretty configurable and easy to extend.
 git clone https://github.com/AtzeDeVries/terra-kube-stack
 cd terra-kube-stack
 git clone https://github.com/kubernetes-incubator/kubespray
-cp -fr kubespray/inventory ../
+cp -fr kubespray/inventory ./
 ```
 #### Set some settings
 copy `tf-state/terraform.tfvars.template` to `tf-state/terraform.tfvars`
