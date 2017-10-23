@@ -1,4 +1,5 @@
 *
+.*
 !.gitignore
 !terraform/
 !terraform/*.tf
@@ -12,3 +13,4 @@
 !kube-resources/*
 !ansible.cfg
 !*.md
+

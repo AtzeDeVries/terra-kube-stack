@@ -6,19 +6,22 @@ variable "ceph-minion-flavor-id" {}
 variable "ceph-minion-sec-group" {}
 variable "ceph-minion-image-id" {}
 
-
-#resource "openstack_networking_port_v2" "ceph-minion-ports" {
-#  count = "${var.ceph-minion-count}"
-#  name = "k8s-${var.cluster-name}-ceph-minion-${count.index}"
-#  network_id = "${var.internal-ip-pool-id}"
-#  admin_state_up = "true"
-#  allowed_address_pairs {
-#    ip_address = "${var.allowed_address_pairs[0]}"
-#  }
-#  allowed_address_pairs {
-#    ip_address = "${var.allowed_address_pairs[1]}"
-#  }
-#}
+resource "openstack_networking_port_v2" "ceph-minion-ports" {
+  count = "${var.ceph-minion-count}"
+  name = "k8s-${var.cluster-name}-ceph-minion-${count.index}-port"
+  network_id = "${openstack_networking_network_v2.k8s-network.id}"
+  admin_state_up = "true"
+  security_group_ids = ["${openstack_compute_secgroup_v2.k8s-secgroup-managed.id}","${openstack_compute_secgroup_v2.k8s-secgroup-services.id}"]
+  fixed_ip {
+    subnet_id = "${openstack_networking_subnet_v2.k8s-network-subnet.id}"
+  }
+  allowed_address_pairs {
+    ip_address = "${var.allowed_address_pairs_0}"
+  }
+  allowed_address_pairs {
+    ip_address = "${var.allowed_address_pairs_1}"
+  }
+}
 
 resource "openstack_compute_instance_v2" "ceph-minion" {
   count = "${var.ceph-minion-count}"
@@ -27,33 +30,21 @@ resource "openstack_compute_instance_v2" "ceph-minion" {
   image_id        = "${var.ceph-minion-image-id}"
   flavor_id       = "${var.ceph-minion-flavor-id}"
   key_pair        = "${var.key-pair}"
-  security_groups = ["${var.ceph-minion-sec-group}"]
 
   network {
-    #port = "${element(openstack_networking_port_v2.ceph-minion-ports.*.id, count.index)}"
-    name = "${var.internal-ip-pool}"
+    port = "${element(openstack_networking_port_v2.ceph-minion-ports.*.id, count.index)}"
   }
-
-#  block_device {
-#    uuid                  = "${var.cronus-image-id}"
-#    source_type           = "image"
-#    volume_size           = 200
-#    boot_index            = 0
-#    destination_type      = "volume"
-#    delete_on_termination = true
-#  }
-
   user_data   = "${file("${path.module}/${var.user-data-file}")}"
 }
 
-resource "openstack_compute_floatingip_v2" "ceph-minion-flip" {
+resource "openstack_networking_floatingip_v2" "ceph-minion-flip" {
   pool  = "${var.floating-ip-pool}"
   count = "${var.ceph-minion-floating-ips}"
 }
 
 resource "openstack_compute_floatingip_associate_v2" "ceph-minion-flip-asso" {
   count = "${var.ceph-minion-floating-ips}"
-  floating_ip = "${element(openstack_compute_floatingip_v2.ceph-minion-flip.*.address, count.index)}"
+  floating_ip = "${element(openstack_networking_floatingip_v2.ceph-minion-flip.*.address, count.index)}"
   instance_id = "${element(openstack_compute_instance_v2.ceph-minion.*.id,count.index)}"
 }
 
@@ -64,26 +55,6 @@ data "template_file" "ceph-minion" {
 
   vars {
     node_name = "k8s-${var.cluster-name}-ceph-minion-${count.index}"
-    #ip = "temp"
-    ip        = "${element(openstack_compute_instance_v2.ceph-minion.*.access_ip_v4, count.index)}"
-    #ip        = "${element(openstack_networking_port_v2.ceph-minion-ports.*.all_fixed_ips.0, count.index)}"
+    ip        = "${element(openstack_compute_instance_v2.ceph-minion.*.network.0.fixed_ip_v4, count.index)}"
   }
 }
-
-
-data "template_file" "ceph-port-update" {
-  count    = "${var.ceph-minion-count}"
-  template = "${file("${path.module}/template-port_update_single")}"
-  vars {
-    #node_name = "k8s-${var.cluster-name}-ceph-minion-${count.index}"
-    #ip = "temp"
-    instance_id = "${element(openstack_compute_instance_v2.ceph-minion.*.id, count.index)}"
-    subnet_0 = "${var.allowed_address_pairs_0}"
-    subnet_1 = "${var.allowed_address_pairs_1}"
-    #port_id        = "${element(openstack_compute_instance_v2.ceph-minion.*.network.0.port, count.index)}"
-    #ip        = "${element(openstack_compute_instance_v2.ceph-minion.*.access_ip_v4, count.index)}"
-   # ip        = "${element(openstack_networking_port_v2.ceph-minion-ports.*.fixed_ip, count.index)}"
-    #ip        = "${element(openstack_networking_port_v2.ceph-minion-ports.*.all_fixed_ips.0, count.index)}"
-  }
-}
-

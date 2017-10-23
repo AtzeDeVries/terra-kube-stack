@@ -5,7 +5,7 @@ data "template_file" "ansible_inventory" {
   vars {
     master_hosts   = "${join("\n",data.template_file.master.*.rendered)}"
     master_noflip_hosts   = "${join("\n",data.template_file.master_noflip.*.rendered)}"
-    bastion_hosts   = "k8s-${var.cluster-name}-master-0 ansible_host=${openstack_compute_floatingip_v2.master-flip.0.address}"
+    bastion_hosts   = "k8s-${var.cluster-name}-master-0 ansible_host=${openstack_networking_floatingip_v2.master-flip.0.address}"
     fat_hosts = "${join("\n",data.template_file.fat-minion.*.rendered)}"
     slim_hosts     = "${join("\n",data.template_file.slim-minion.*.rendered)}"
     ceph_hosts     = "${join("\n",data.template_file.ceph-minion.*.rendered)}"
@@ -15,20 +15,20 @@ data "template_file" "ansible_inventory" {
 data "template_file" "ansible_sshconfig" {
   template = "${file("${path.module}/template-sshconfig")}"
   vars {
-    bastion_hosts   = "${openstack_compute_floatingip_v2.master-flip.0.address}"
+    bastion_hosts   = "${openstack_networking_floatingip_v2.master-flip.0.address}"
     sshuser       = "${var.ssh_user}"
   }
 }
 
-data "template_file" "port-update" {
-  template = "${file("${path.module}/template-port_update")}"
-  vars { 
-    slim-ports = "${join("\n",data.template_file.slim-port-update.*.rendered)}"
-    master-ports = "${join("\n",data.template_file.master-port-update.*.rendered)}"
-    fat-ports = "${join("\n",data.template_file.fat-port-update.*.rendered)}"
-    ceph-ports = "${join("\n",data.template_file.ceph-port-update.*.rendered)}"
-  }
-}
+#data "template_file" "port-update" {
+#  template = "${file("${path.module}/template-port_update")}"
+#  vars { 
+#    slim-ports = "${join("\n",data.template_file.slim-port-update.*.rendered)}"
+#    master-ports = "${join("\n",data.template_file.master-port-update.*.rendered)}"
+#    fat-ports = "${join("\n",data.template_file.fat-port-update.*.rendered)}"
+#    ceph-ports = "${join("\n",data.template_file.ceph-port-update.*.rendered)}"
+#  }
+#}
 
 output "ansible_inventory" {
   value = "${data.template_file.ansible_inventory.rendered}"
@@ -38,9 +38,9 @@ output "ansible_sshconfig" {
   value = "${data.template_file.ansible_sshconfig.rendered}"
 }
 
-output "port-update" {
- value =  "${data.template_file.port-update.rendered}"
-}
+#output "port-update" {
+# value =  "${data.template_file.port-update.rendered}"
+#}
 
 #### -> output
 #resource "template_file" "cronus" {
