@@ -11,7 +11,9 @@
 !scripts/get-certs.sh
 !scripts/*.template
 !kube-resources/
-!kube-resources/*
+!kube-resources/*.yaml
+!kube-resources/*.json
+!kube-rescoures/*.md
 !ansible.cfg
 !*.md
 
