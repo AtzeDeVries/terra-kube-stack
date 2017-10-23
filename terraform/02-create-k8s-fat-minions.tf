@@ -6,6 +6,11 @@ variable "fat-minion-flavor-id" {}
 variable "fat-minion-sec-group" {}
 variable "fat-minion-image-id" {}
 
+resource "openstack_compute_servergroup_v2" "fat-minion-anti-affinity" {
+  name = "k8s-fat-minion-${var.cluster-name}-anti-anffinity"
+  policies = ["anti-affinity"]
+}
+
 resource "openstack_networking_port_v2" "fat-minion-ports" {
   count = "${var.fat-minion-count}"
   name = "k8s-${var.cluster-name}-fat-minion-${count.index}-port"
@@ -30,6 +35,9 @@ resource "openstack_compute_instance_v2" "fat-minion" {
   image_id        = "${var.fat-minion-image-id}"
   flavor_id       = "${var.fat-minion-flavor-id}"
   key_pair        = "${var.key-pair}"
+  scheduler_hints {
+            group = "${openstack_compute_servergroup_v2.fat-minion-anti-affinity.id}"
+  }
 
   network {
     port = "${element(openstack_networking_port_v2.fat-minion-ports.*.id, count.index)}"

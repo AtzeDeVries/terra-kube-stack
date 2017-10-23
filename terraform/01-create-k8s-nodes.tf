@@ -7,6 +7,10 @@ variable "master-flavor-id" {}
 variable "master-image-id" {}
 
 
+resource "openstack_compute_servergroup_v2" "master-anti-affinity" {
+  name = "k8s-master-${var.cluster-name}-anti-anffinity"
+  policies = ["anti-affinity"]
+}
 
 resource "openstack_networking_port_v2" "master-ports" {
   count = "${var.master-count}"
@@ -32,7 +36,9 @@ resource "openstack_compute_instance_v2" "master" {
   image_id        = "${var.master-image-id}"
   flavor_id       = "${var.master-flavor-id}"
   key_pair        = "${var.key-pair}"
-
+  scheduler_hints {
+            group = "${openstack_compute_servergroup_v2.master-anti-affinity.id}"
+  }
   network {
     port = "${element(openstack_networking_port_v2.master-ports.*.id, count.index)}"
   }
