@@ -79,13 +79,4 @@ data "template_file" "master_noflip" {
 }
 
 
-#data "template_file" "master-port-update" {
-#  count    = "${var.master-count}"
-#  template = "${file("${path.module}/template-port_update_single")}"
-#  vars {
-#    instance_id = "${element(openstack_compute_instance_v2.master.*.id, count.index)}"
-#    subnet_0 = "${var.allowed_address_pairs_0}"
-#    subnet_1 = "${var.allowed_address_pairs_1}"
-#  }
-#}
 

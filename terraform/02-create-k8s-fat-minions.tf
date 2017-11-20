@@ -68,13 +68,4 @@ data "template_file" "fat-minion" {
 }
 
 
-#data "template_file" "fat-port-update" {
-#  count    = "${var.fat-minion-count}"
-#  template = "${file("${path.module}/template-port_update_single")}"
-#  vars {
-#    instance_id = "${element(openstack_compute_instance_v2.fat-minion.*.id, count.index)}"
-#    subnet_0 = "${var.allowed_address_pairs_0}"
-#    subnet_1 = "${var.allowed_address_pairs_1}"
-#  }
-#}
 
